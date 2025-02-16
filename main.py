@@ -1,4 +1,4 @@
-import os, ffmpeg
+import os, ffmpeg, json
 from dotenv import load_dotenv
 from telegram import Bot
 from telegram.ext import Application
@@ -12,7 +12,9 @@ def main():
     name = os.getenv('NAME')
     base_url = os.getenv('BASE_URL') or 'http://localhost:8081/bot'
     timeout = os.getenv('READ_TIMEOUT') or 30
-    should_convert = os.getenv('SHOULD_CONVERT') or True
+    should_convert = os.getenv('SHOULD_CONVERT')
+    if should_convert: should_convert = json.loads(should_convert.lower())
+    else: should_convert = True
 
     application = (
         Application.builder()
