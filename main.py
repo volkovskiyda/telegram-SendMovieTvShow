@@ -50,10 +50,9 @@ def main():
     print("send video done")
 
 def single_directory(dir: str) -> str:
-    path = os.path.join(dir)
-    listdir = os.listdir(path)
-    if len(listdir) == 1: return os.path.join(path, listdir[0])
-    else: print("Directories: ", os.listdir(path))
+    listdir = [f for f in os.listdir(dir) if not os.path.isfile(f)]
+    if len(listdir) == 1: return os.path.join(dir, listdir[0])
+    else: print("Directories: ", listdir)
 
 def converted(video_folder: str) -> str:
     converted = 'converted'
