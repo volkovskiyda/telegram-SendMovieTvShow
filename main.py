@@ -69,7 +69,7 @@ async def send_video(bot: Bot, chat_id: str, text: str, converted_folder: str):
         text = text,
         disable_notification=True,
     )
-    for file in os.listdir(converted_folder):
+    for file in sorted(os.listdir(converted_folder)):
         await bot.send_video(
             chat_id=chat_id,
             caption=file,
