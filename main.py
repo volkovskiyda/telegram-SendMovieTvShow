@@ -15,6 +15,9 @@ def main():
     should_convert = os.getenv('SHOULD_CONVERT')
     if should_convert: should_convert = json.loads(should_convert.lower())
     else: should_convert = True
+    start_index = int(os.getenv('START_INDEX') or 1) - 1
+    end_index = int(os.getenv('END_INDEX') or 0)
+    if end_index == 0: end_index = None
 
     application = (
         Application.builder()
@@ -39,7 +42,9 @@ def main():
             bot=bot,
             chat_id=chat_id,
             text=name or os.path.basename(video_folder),
-            converted_folder=converted_folder
+            converted_folder=converted_folder,
+            start_index=start_index,
+            end_index=end_index,
         )
     )
     print("send video done")
@@ -63,13 +68,15 @@ def convert(video_folder: str, converted_folder: str):
             output_file = os.path.join(converted_folder, file.rsplit('.', 1)[0] + '.mp4')
             ffmpeg.input(input_file).output(output_file, codec='copy', format='mp4', loglevel='quiet').run()
 
-async def send_video(bot: Bot, chat_id: str, text: str, converted_folder: str):
+async def send_video(bot: Bot, chat_id: str, text: str, converted_folder: str, start_index: int, end_index: int):
+    files = sorted([file for file in os.listdir(converted_folder) if file.endswith('.mp4')])[start_index:end_index]
+
     await bot.send_message(
         chat_id=chat_id,
         text = text,
         disable_notification=True,
     )
-    for file in sorted(os.listdir(converted_folder)):
+    for file in files:
         await bot.send_video(
             chat_id=chat_id,
             caption=file,
