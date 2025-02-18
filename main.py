@@ -6,6 +6,8 @@ from asyncio import run
 
 load_dotenv()
 
+developer_id = os.getenv('DEVELOPER_ID')
+
 def main():
     token = os.getenv('BOT_TOKEN')
     chat_id = os.getenv('CHAT_ID')
@@ -81,6 +83,12 @@ async def send_video(bot: Bot, chat_id: str, text: str, converted_folder: str, s
             caption=file,
             video=os.path.join(converted_folder, file),
             filename=file,
+            disable_notification=True,
+        )
+    if developer_id:
+        await bot.send_message(
+            chat_id=developer_id,
+            text = f"Files sent: {text} ({converted_folder})",
             disable_notification=True,
         )
 
