@@ -78,19 +78,35 @@ async def send_video(bot: Bot, chat_id: str, text: str, converted_folder: str, s
         disable_notification=True,
     )
     for file in files:
-        await bot.send_video(
-            chat_id=chat_id,
-            caption=file,
-            video=os.path.join(converted_folder, file),
-            filename=file,
-            disable_notification=True,
+        await retry(
+            target=send_video,
+            target_args=(bot, chat_id, file, os.path.join(converted_folder, file)),
+            error_target=send_message_developer,
+            error_target_args=(bot, f"Error sending file: {file}"),
+            retries=3,
         )
-    if developer_id:
-        await bot.send_message(
-            chat_id=developer_id,
-            text = f"Files sent: {text} ({converted_folder})",
-            disable_notification=True,
-        )
+    send_message_developer(bot, f"Files sent: {text} ({converted_folder})")
+
+async def send_video(bot: Bot, chat_id: str, file: str, video: str): 
+    await bot.send_video(chat_id=chat_id, caption=file, video=video, filename=file, disable_notification=True)
+
+async def send_message_developer(bot: Bot, text: str):
+    if developer_id: await bot.send_message(chat_id=developer_id, text=text, disable_notification=True)
+
+async def retry(
+    target = None, target_args = (),
+    error_target = None, error_target_args = (),
+    retries = 3,
+):
+    for i in range(retries):
+        try:
+            await target(*target_args)
+            break
+        except Exception as e:
+            print(f"Error: {e}")
+            if i == retries - 1:
+                if error_target: await error_target(*error_target_args)
+                raise e
 
 if __name__ == "__main__":
     main()
