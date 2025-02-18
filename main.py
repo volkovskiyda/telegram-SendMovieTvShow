@@ -56,12 +56,10 @@ def single_directory(dir: str) -> str:
     else: print("Directories: ", listdir)
 
 def convert(video_folder: str, converted_folder: str):
-    for file in os.listdir(video_folder):
-        if file.endswith('.avi') or file.endswith('.mkv'):
-            print("File: ", file)
-            input_file = os.path.join(video_folder, file)
-            output_file = os.path.join(converted_folder, file.rsplit('.', 1)[0] + '.mp4')
-            ffmpeg.input(input_file).output(output_file, codec='copy', format='mp4', loglevel='quiet').run()
+    for file in [file for file in os.listdir(video_folder) if file.endswith('.avi') or file.endswith('.mkv')]:
+        input_file = os.path.join(video_folder, file)
+        output_file = os.path.join(converted_folder, file.rsplit('.', 1)[0] + '.mp4')
+        ffmpeg.input(input_file).output(output_file, codec='copy', format='mp4', loglevel='quiet').run()
 
 async def send_video(bot: Bot, chat_id: str, text: str, converted_folder: str, start_index: int, end_index: int):
     files = sorted([file for file in os.listdir(converted_folder) if file.endswith('.mp4')])[start_index:end_index]
