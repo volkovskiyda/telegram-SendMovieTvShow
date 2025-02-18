@@ -14,9 +14,6 @@ def main():
     name = os.getenv('NAME')
     base_url = os.getenv('BASE_URL') or 'http://localhost:8081/bot'
     timeout = os.getenv('READ_TIMEOUT') or 30
-    should_convert = os.getenv('SHOULD_CONVERT')
-    if should_convert: should_convert = json.loads(should_convert.lower())
-    else: should_convert = True
     start_index = int(os.getenv('START_INDEX') or 1) - 1
     end_index = int(os.getenv('END_INDEX') or 0)
     if end_index == 0: end_index = None
@@ -32,8 +29,9 @@ def main():
 
     video_folder = single_directory(dir = '/data')
     if not video_folder: return
+    should_convert = len([f for f in os.listdir(video_folder) if not f.endswith('.mp4')]) > 0
     if should_convert:
-        converted_folder = converted(video_folder)
+        converted_folder = os.path.join('/converted')
         convert(video_folder, converted_folder)
         print("convert_to_folder done: ", os.listdir(converted_folder))
     else:
@@ -55,11 +53,6 @@ def single_directory(dir: str) -> str:
     listdir = [f for f in os.listdir(dir) if not os.path.isfile(f)]
     if len(listdir) == 1: return os.path.join(dir, listdir[0])
     else: print("Directories: ", listdir)
-
-def converted(video_folder: str) -> str:
-    converted = 'converted'
-    os.makedirs(os.path.join(video_folder, converted), exist_ok=True)
-    return os.path.join(video_folder, converted)
 
 def convert(video_folder: str, converted_folder: str):
     for file in os.listdir(video_folder):
