@@ -7,6 +7,7 @@ from asyncio import run
 load_dotenv()
 
 developer_id = os.getenv('DEVELOPER_ID')
+base_path = os.getenv('BASE_PATH') or '/'
 
 def main():
     token = os.getenv('BOT_TOKEN')
@@ -27,11 +28,11 @@ def main():
     )
     bot = application.bot
 
-    video_folder = single_directory(dir = '/data')
+    video_folder = single_directory(dir = f'{base_path}/data')
     if not video_folder: return
     should_convert = len([f for f in os.listdir(video_folder) if not f.endswith('.mp4')]) > 0
     if should_convert:
-        converted_folder = os.path.join('/converted')
+        converted_folder = os.path.join(f'{base_path}/converted')
         convert(video_folder, converted_folder)
         print("convert_to_folder done: ", os.listdir(converted_folder))
     else:
