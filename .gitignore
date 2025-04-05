@@ -3,5 +3,6 @@ venv/
 .env
 data/
 converted/
+temp/
 .DS_Store
 TODO
