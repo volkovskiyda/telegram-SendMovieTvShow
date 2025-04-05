@@ -64,11 +64,7 @@ def convert(video_folder: str, converted_folder: str):
 async def send_all_videos(bot: Bot, chat_id: str, text: str, converted_folder: str, start_index: int, end_index: int):
     files = sorted([file for file in os.listdir(converted_folder) if file.endswith('.mp4')])[start_index:end_index]
 
-    await bot.send_message(
-        chat_id=chat_id,
-        text = text,
-        disable_notification=True,
-    )
+    if len(files) > 1: await bot.send_message(chat_id=chat_id, text = text, disable_notification=True)
     for file in files:
         await retry(
             target=send_video,
