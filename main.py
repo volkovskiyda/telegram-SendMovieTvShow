@@ -80,7 +80,26 @@ async def send_all_videos(bot: Bot, chat_id: str, text: str, converted_folder: s
     await send_message_developer(bot, f"Files sent: {text} ({converted_folder})")
 
 async def send_video(bot: Bot, chat_id: str, file: str, video: str): 
-    await bot.send_video(chat_id=chat_id, caption=file, video=video, filename=file, disable_notification=True)
+    try:
+        probe = ffmpeg.probe(video)
+        duration = int(float(probe['format']['duration']))
+        width = int(probe['streams'][0]['width'])
+        height = int(probe['streams'][0]['height'])
+    except:
+        duration = None
+        width = None
+        height = None
+    print(f"Sending video: {file} ({video}), duration: {duration}, width: {width}, height: {height}")
+    await bot.send_video(
+        chat_id=chat_id,
+        caption=file,
+        video=video,
+        filename=file,
+        duration=duration,
+        width=width,
+        height=height,
+        disable_notification=True
+    )
 
 async def send_message_developer(bot: Bot, text: str):
     if developer_id: await bot.send_message(chat_id=developer_id, text=text, disable_notification=True)
