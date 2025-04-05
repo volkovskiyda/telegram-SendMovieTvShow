@@ -77,7 +77,7 @@ async def send_all_videos(bot: Bot, chat_id: str, text: str, converted_folder: s
             error_target_args=(bot, f"Error sending file: {file}"),
             retries=3,
         )
-    send_message_developer(bot, f"Files sent: {text} ({converted_folder})")
+    await send_message_developer(bot, f"Files sent: {text} ({converted_folder})")
 
 async def send_video(bot: Bot, chat_id: str, file: str, video: str): 
     await bot.send_video(chat_id=chat_id, caption=file, video=video, filename=file, disable_notification=True)
