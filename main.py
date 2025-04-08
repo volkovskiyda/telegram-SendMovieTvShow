@@ -61,7 +61,7 @@ def convert(video_folder: str, converted_folder: str):
         output_file = os.path.join(converted_folder, file.rsplit('.', 1)[0] + '.mp4')
         vid = ffmpeg.input(input_file)
         if os.path.getsize(input_file) >> 20 > 2000:
-            vid.filter('scale', -1, 720).output(output_file, map='0:a:0', format='mp4').run()
+            vid.filter('scale', -1, 720).output(output_file, map='0:a:0', format='mp4', loglevel='quiet').run()
         else:
             vid.output(output_file, codec='copy', format='mp4').run()
 
