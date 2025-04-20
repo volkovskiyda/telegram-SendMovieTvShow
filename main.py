@@ -61,9 +61,13 @@ def convert(video_folder: str, converted_folder: str):
         output_file = os.path.join(converted_folder, file.rsplit('.', 1)[0] + '.mp4')
         vid = ffmpeg.input(input_file)
         if os.path.getsize(input_file) >> 20 > 2000:
-            vid.filter('scale', -1, 720).output(output_file, map='0:a:0', format='mp4', loglevel='quiet').run()
-        else:
-            vid.output(output_file, codec='copy', format='mp4').run()
+            try:
+                probe = ffmpeg.probe(input_file)
+                height = int(probe['streams'][0]['height'])
+            except: height = 0
+            if height > 720: vid.filter('scale', -1, 720).output(output_file, map='0:a:0', format='mp4', loglevel='quiet').run()
+            else: vid.output(output_file, map='0:0', format='mp4', loglevel='quiet').run()
+        else: vid.output(output_file, codec='copy', format='mp4').run()
 
 async def send_all_videos(bot: Bot, chat_id: str, text: str, converted_folder: str, start_index: int, end_index: int):
     files = sorted([file for file in os.listdir(converted_folder) if file.endswith('.mp4')])[start_index:end_index]
