@@ -61,7 +61,9 @@ def convert(video_folder: str, converted_folder: str):
         output_file = os.path.join(converted_folder, file.rsplit('.', 1)[0] + '.mp4')
         vid = ffmpeg.input(input_file)
         if os.path.getsize(input_file) >> 20 > 2000:
-            vid.output(output_file, map='0:0', format='mp4').run()
+            if os.getenv('CONVERT_CODEC', 'false').lower() == 'true':
+                vid.output(output_file, vcodec='libx264', acodec='aac', format='mp4').run()
+            else: vid.output(output_file, map='0:0', format='mp4').run()
         else: vid.output(output_file, codec='copy', format='mp4').run()
 
 async def send_all_videos(bot: Bot, chat_id: str, text: str, converted_folder: str, start_index: int, end_index: int):
