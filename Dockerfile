@@ -5,10 +5,10 @@ VOLUME /data
 VOLUME /converted
 
 WORKDIR /project
-COPY main.py requirements.txt /project/
+COPY main.py /project/
 
 RUN apt update && apt install -y ffmpeg
 RUN python -m pip install --upgrade pip
-RUN pip install -r requirements.txt
+RUN pip install -U python-dotenv python-telegram-bot ffmpeg-python asyncio
 
-CMD python main.py
+CMD ["python", "main.py"]
