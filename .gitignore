@@ -5,4 +5,5 @@ data/
 converted/
 temp/
 .DS_Store
+.idea
 TODO
